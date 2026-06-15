@@ -15,7 +15,9 @@ class InscriptionController {
     }
 
     def show(Long id) {
+		// Voir Cours controller
         try {
+			// Voir Cours controller
             respond inscriptionService.detailInscription(id)
         } catch (RuntimeException e) {
             respond (
@@ -26,7 +28,9 @@ class InscriptionController {
     }
 
     def save () {
+		// Voir Cours controller
         try {
+			// Voir Cours controller
             def dto = new InscriptionRequestDTO(
                     etudiantId: request.JSON.etudiantId,
                     coursId: request.JSON.coursId
