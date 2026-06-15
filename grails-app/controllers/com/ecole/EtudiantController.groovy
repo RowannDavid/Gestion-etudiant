@@ -14,6 +14,7 @@ class EtudiantController {
     }
 
     def show(Long id) {
+		// Voir Cours controller
         try {
             respond etudiantService.detailEtudiant(id)
         } catch (RuntimeException e) {
@@ -25,7 +26,9 @@ class EtudiantController {
     }
 
     def save () {
+		// Voir Cours controller
         try {
+			// Voir Cours controller
             def dto = new EtudiantRequestDTO(
                     nom: request.JSON.nom,
                     prenom: request.JSON.prenom,
@@ -43,7 +46,9 @@ class EtudiantController {
     }
 
     def update (Long id) {
+		// Voir Cours controller
         try {
+			// Voir Cours controller
             def dto = new EtudiantRequestDTO(
                     nom: request.JSON.nom,
                     prenom: request.JSON.prenom,
