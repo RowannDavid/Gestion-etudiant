@@ -12,7 +12,8 @@ class CoursController {
         respond coursService.listeCours()
     }
 
-    def show(Long id) {
+    def show(Long id) {(
+        // Evite les try catch dans tes controllers cherche un moyen de faire(Indice faire des exceptions custom qui renverrons la bonne réponse d'erreur)
         try {
             respond coursService.detailCours(id)
         } catch (RuntimeException e) {
@@ -24,7 +25,9 @@ class CoursController {
     }
 
     def save () {
+        // Evite les try catch dans tes controllers cherche un moyen de faire(Indice faire des exceptions custom qui renverrons la bonne réponse d'erreur)
         try {
+            // Je te conseille une methode qui converti directement un map en dto ça évitera du dupliquer du code
             def dto = new CoursRequestDTO(
                     titre: request.JSON.titre,
                     description: request.JSON.description,
@@ -42,7 +45,9 @@ class CoursController {
     }
 
     def update (Long id) {
+        // Evite les try catch dans tes controllers cherche un moyen de faire(Indice faire des exceptions custom qui renverrons la bonne réponse d'erreur)
         try {
+            // Je te conseille une methode qui converti directement un map en dto ça évitera du dupliquer du code
             def dto = new CoursRequestDTO(
                     titre: request.JSON.titre,
                     description: request.JSON.description,
