@@ -14,50 +14,17 @@ class EtudiantController {
     }
 
     def show(Long id) {
-        try {
-            respond etudiantService.detailEtudiant(id)
-        } catch (RuntimeException e) {
-            respond (
-                    erreur: [e.message],
-                    status: 404,
-            )
-        }
+        respond etudiantService.detailEtudiant(id)
     }
 
     def save () {
-        try {
-            def dto = new EtudiantRequestDTO(
-                    nom: request.JSON.nom,
-                    prenom: request.JSON.prenom,
-                    email: request.JSON.email,
-                    telephone: request.JSON.telephone
-            )
-
-            respond etudiantService.creerEtudiant(dto)
-        } catch (RuntimeException e) {
-            respond (
-                    erreur: [e.message],
-                    status: 400,
-            )
-        }
+        def dto = EtudiantRequestDTO.fromMap(request.JSON)
+        respond etudiantService.creerEtudiant(dto)
     }
 
     def update (Long id) {
-        try {
-            def dto = new EtudiantRequestDTO(
-                    nom: request.JSON.nom,
-                    prenom: request.JSON.prenom,
-                    email: request.JSON.email,
-                    telephone: request.JSON.telephone
-            )
-
-            respond etudiantService.modifierEtudiant(dto, id)
-        } catch (RuntimeException e) {
-            respond (
-                    erreur: [e.message],
-                    status: 400,
-            )
-        }
+        def dto = EtudiantRequestDTO.fromMap(request.JSON, id)
+        respond etudiantService.modifierEtudiant(dto, id)
     }
 
     def delete (Long id) {

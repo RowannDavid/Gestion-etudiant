@@ -7,4 +7,12 @@ class CoursRequestDTO {
     Integer dureeMinutes
     Integer place
 
+    static CoursRequestDTO fromMap(Map data) {
+        new CoursRequestDTO(
+                titre: data.titre,
+                description: data.description,
+                dureeMinutes: data.dureeMinutes,
+                place: data.place
+        )
+    }
 }

@@ -15,30 +15,12 @@ class InscriptionController {
     }
 
     def show(Long id) {
-        try {
-            respond inscriptionService.detailInscription(id)
-        } catch (RuntimeException e) {
-            respond (
-                    erreur: [e.message],
-                    status: 404,
-            )
-        }
+        respond inscriptionService.detailInscription(id)
     }
 
     def save () {
-        try {
-            def dto = new InscriptionRequestDTO(
-                    etudiantId: request.JSON.etudiantId,
-                    coursId: request.JSON.coursId
-            )
-
-            respond inscriptionService.inscrireEtudiant(dto)
-        } catch (RuntimeException e) {
-            respond (
-                    erreur: [e.message],
-                    status: 400,
-            )
-        }
+        def dto = InscriptionRequestDTO.fromMpap(request.JSON)
+        respond inscriptionService.inscrireEtudiant(dto)
     }
 
     def annuler (Long id) {

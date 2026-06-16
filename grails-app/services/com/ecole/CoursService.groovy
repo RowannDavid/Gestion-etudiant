@@ -2,96 +2,106 @@ package com.ecole
 
 import com.ecole.dto.CoursRequestDTO
 import com.ecole.dto.CoursResponseDTO
+import com.ecole.exception.CourseNotFoundException
 import grails.gorm.transactions.Transactional
+import groovy.util.logging.Slf4j
 
+@Slf4j
 @Transactional
 class CoursService {
 
-    CoursResponseDTO creerCours (CoursRequestDTO dto) {
-        def cours = new Cours(
+    CoursResponseDTO creerCours(CoursRequestDTO dto) {
+
+        // Début de création d'un cours
+        log.info("Création d'un cours, titre={}", dto.titre)
+
+        Cours cours = new Cours(
                 titre: dto.titre,
                 description: dto.description,
                 dureeMinutes: dto.dureeMinutes,
                 place: dto.place
         )
 
-        if (!cours.save(flush: true)) {
-            throw new RuntimeException(
-                    "impossible de creer un cours"
-            )
-        }
+        cours.save(flush: true, failOnError: true)
 
-        return toResponseDTO(cours)
+        // Création réussie
+        log.info("Cours créé avec succès, id={}", cours.id)
+
+        return new CoursResponseDTO(cours)
     }
 
     @Transactional(readOnly = true)
     List<CoursResponseDTO> listeCours() {
-        def listecours = Cours.findAll()
-        return listecours.collect { cours ->
-            toResponseDTO(cours)
+
+        // Récupération de tous les cours
+        log.info("Récupération de la liste des cours")
+
+        List<Cours> listecours = Cours.findAll()
+
+        log.debug("Nombre de cours trouvés={}", listecours.size())
+
+        return listecours.collect {
+            new CoursResponseDTO(it)
         }
     }
 
     @Transactional(readOnly = true)
     CoursResponseDTO detailCours(Long id) {
-        def cours = Cours.get(id)
-        if (!cours) {
-            throw new RuntimeException(
-                    "impossible de trouver le cours"
-            )
-        }
-        return toResponseDTO(cours)
+
+        // Recherche d'un cours par son identifiant
+        log.info("Recherche du cours id={}", id)
+
+        Cours cours = coursId(id)
+
+        return new CoursResponseDTO(cours)
     }
 
-    CoursResponseDTO modifierCours (CoursRequestDTO dto, Long id) {
-        def cours = Cours.get(id)
-        if (!cours) {
-            throw new RuntimeException(
-                    "impossible de trouver le cours"
-            )
-        }
+    CoursResponseDTO modifierCours(CoursRequestDTO dto, Long id) {
+
+        // Modification d'un cours existant
+        log.info("Modification du cours id={}", id)
+
+        Cours cours = coursId(id)
+
         cours.titre = dto.titre
         cours.description = dto.description
         cours.dureeMinutes = dto.dureeMinutes
         cours.place = dto.place
 
+        cours.save(flush: true, failOnError: true)
 
-        if (!cours.save(flush: true)) {
-            throw new RuntimeException(
-                    "impossible de modifier le cours"
-            )
-        }
+        log.info("Cours modifié avec succès, id={}", id)
 
-        return toResponseDTO(cours)
+        return new CoursResponseDTO(cours)
     }
-
 
     void supprimerCours(Long id) {
-        def cours = Cours.get(id)
+
+        // Suppression d'un cours
+        log.info("Suppression du cours id={}", id)
+
+        Cours cours = coursId(id)
+
+        cours.delete(flush: true, failOnError: true)
+
+        log.info("Cours supprimé avec succès, id={}", id)
+    }
+
+    private Cours coursId(Long id) {
+
+        log.debug("Vérification de l'existence du cours id={}", id)
+
+        Cours cours = Cours.get(id)
+
         if (!cours) {
-            throw new RuntimeException(
-                    "impossible de trouver le cours"
+
+            log.warn("Cours introuvable, id={}", id)
+
+            throw new CourseNotFoundException(
+                    "Cours ${id} introuvable"
             )
         }
-        cours.delete(flush: true)
-    }
 
-    private CoursResponseDTO toResponseDTO(Cours cours) {
-        new CoursResponseDTO(
-                id: cours.id,
-                titre: cours.titre,
-                description: cours.description,
-                dureeMinutes: cours.dureeMinutes,
-                place: cours.place
-
-        )
+        return cours
     }
 }
-
-/*
-creerCours()
-listeCours()
-detailCours()
-modifierCours()
-supprimerCours()
- */

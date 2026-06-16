@@ -13,50 +13,18 @@ class CoursController {
     }
 
     def show(Long id) {
-        try {
-            respond coursService.detailCours(id)
-        } catch (RuntimeException e) {
-            respond (
-                    erreur: [e.message],
-                    status: 404,
-            )
-        }
+        respond coursService.detailCours(id)
     }
 
     def save () {
-        try {
-            def dto = new CoursRequestDTO(
-                    titre: request.JSON.titre,
-                    description: request.JSON.description,
-                    dureeMinutes: request.JSON.dureeMinutes,
-                    place: request.JSON.place
-            )
+        def dto = CoursRequestDTO.fromMap(request.JSON)
+        respond coursService.creerCours(dto)
 
-            respond coursService.creerCours(dto)
-        } catch (RuntimeException e) {
-            respond (
-                    erreur: [e.message],
-                    status: 400,
-            )
-        }
     }
 
     def update (Long id) {
-        try {
-            def dto = new CoursRequestDTO(
-                    titre: request.JSON.titre,
-                    description: request.JSON.description,
-                    dureeMinutes: request.JSON.dureeMinutes,
-                    place: request.JSON.place
-            )
-
-            respond coursService.modifierCours(dto, id)
-        } catch (RuntimeException e) {
-            respond (
-                    erreur: [e.message],
-                    status: 400,
-            )
-        }
+        def dto = CoursRequestDTO.fromMap(request.JSON, id)
+        respond coursService.modifierCours(dto, id)
     }
 
     def delete (Long id) {
