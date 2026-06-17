@@ -72,14 +72,83 @@ grails:
             js: text/javascript
             rss: application/rss+xml
             text: text/plain
-            all: '*/*'            
-    urlmapping:
-        cache:
-            maxsize: 1000
-    controllers:
-        defaultScope: singleton
-    converters:
-        encoding: UTF-8
+            all: '*/*'
+    cors:
+        enabled: true
+        mappings:
+            '/**':
+                allowedOrigins:
+                    - "http://localhost:3000"
+                    - "http://localhost:4200"
+                allowedMethods:
+                    - GET
+                    - POST
+                    - PUT
+                    - DELETE
+                    - OPTIONS
+                allowedHeaders: "*"
+
+    plugin:
+        springsecurity:
+            securityConfigType: "Annotation"
+            rejectifNoRule: false
+            fii:
+                rejectPublicInvocations: false
+                active: true
+
+                userLookup:
+                    userDomainClassName: 'com.ecole.User'
+                    authorityJoinClassName: 'com.ecole.UserRole'
+                authority:
+                    className: 'com.ecole.Role'
+
+                password:
+                    algorithm: 'bcrypt'
+                controllerAnnotations:
+                    staticRules:
+                        - pattern: '/'
+                          access: [ 'permitAll' ]
+                        - pattern: '/error'
+                          access: [ 'permitAll' ]
+                        - pattern: '/api/login'
+                          access: [ 'permitAll' ]
+                        - pattern: '/api/demandes'
+                          access: [ 'permitAll' ]
+
+                    filterChain:
+                        chainMap:
+                            - pattern: '/assets/**'
+                              filters: 'none'
+                            - pattern: '/*/js/*'
+                              filters: 'none'
+                            - pattern: '/*/css/*'
+                              filters: 'none'
+                            - pattern: '/*/images/*'
+                              filters: 'none'
+                            - pattern: '/**/favicon.ico'
+                              filters: 'none'
+                            - pattern: '/api/login'
+                              filters: 'JOINED_FILTERS,-authenticationProcessingFilter,-securityContextPersistenceFilter,-rememberMeAuthenticationFilter'
+                            - pattern: '/api/**'
+                              filters: 'JOINED_FILTERS,-anonymousAuthenticationFilter,-exceptionTranslationFilter,-authenticationProcessingFilter,-securityContextPersistenceFilter'
+                            - pattern: '/**'
+                              filters: 'JOINED_FILTERS,-restTokenValidationFilter,-restExceptionTranslationFilter'
+
+                rest:
+                    login:
+                        active: true
+                        endpointUrl: '/api/login'
+                        failureStatusCode: 401
+                        useJsonCredentials: true
+                    logout:
+                        endpointUrl: '/api/logout'
+                    token:
+                        validation:
+                            enableAnonymousAccess: true
+                        storage:
+                            jwt:
+                                secret: 'MonSecretJWTTresLongEtDifficileADeviner123456789'
+                                expiration: 86400
 
 ---
 hibernate:

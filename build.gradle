@@ -65,6 +65,10 @@ dependencies {
     testImplementation "org.spockframework:spock-core"
     testImplementation "org.apache.grails:grails-testing-support-views-gson"
 
+    implementation 'org.apache.grails:grails-spring-security:7.0.2'
+    implementation 'org.apache.grails:grails-spring-security-rest:7.0.2'
+
+
 }
 
 compileJava.options.release = 17
